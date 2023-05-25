@@ -23,17 +23,27 @@ mongoose
   });
 
 app.get("/", (req, res) => {
-  res.render("home");
+  res.render("camps/home");
 });
 
 app.get("/campgrounds", async (req, res) => {
   const camps = await Campground.find({});
-  res.render("index", { camps });
+  res.render("camps/index", { camps });
 });
 
 app.get("/campgrounds/:id/details", async (req, res) => {
   const camp = await Campground.findById(req.params.id);
-  res.render("details", { camp });
+  res.render("camps/details", { camp });
+});
+
+app.get("/campgrounds/new", (req, res) => {
+  res.render("camps/new");
+});
+
+app.post("/campgrounds", async (req, res) => {
+  const camp = new Campground(req.body);
+  await camp.save();
+  res.redirect(`/campgrounds/${camp._id}/details`);
 });
 
 app.listen(3000, () => {

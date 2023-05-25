@@ -26,6 +26,12 @@ app.get("/", (req, res) => {
   res.render("home");
 });
 
+app.get("/campgrounds", async (req, res) => {
+  const camps = await Campground.find({});
+  console.log(camps);
+  res.render("index", { camps });
+});
+
 app.listen(3000, () => {
   console.log("Server running on port 3000.");
 });

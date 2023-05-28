@@ -3,7 +3,12 @@
 <div class="row mb-3">
   <h1 class="text-center">Update campground</h1>
   <div class="col-6 offset-3">
-    <form action="/campgrounds/<%= camp._id %>?_method=put" method="post">
+    <form
+      class="needs-validation"
+      action="/campgrounds/<%= camp._id %>?_method=put"
+      method="post"
+      novalidate
+    >
       <div class="mb-3">
         <label class="form-label" for="title">Title</label>
         <input
@@ -13,7 +18,10 @@
           name="title"
           placeholder="Enter title"
           value="<%= camp.title %>"
+          required
         />
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please enter title.</div>
       </div>
       <div class="mb-3">
         <label class="form-label" for="location">Location</label>
@@ -24,7 +32,10 @@
           name="location"
           placeholder="Enter location"
           value="<%= camp.location %>"
+          required
         />
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please enter location.</div>
       </div>
       <div class="mb-3">
         <label class="form-label" for="image">Image URL</label>
@@ -35,7 +46,10 @@
           name="image"
           placeholder="Enter image url"
           value="<%= camp.image %>"
+          required
         />
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please enter image url.</div>
       </div>
       <div class="mb-3">
         <label class="form-label" for="price">Campground Price</label>
@@ -50,14 +64,24 @@
             aria-label="price"
             aria-describedby="price-label"
             value="<%= camp.price %>"
+            required
           />
+          <div class="valid-feedback">Looks good!</div>
+          <div class="invalid-feedback">Please enter price.</div>
         </div>
       </div>
       <div class="mb-3">
         <label class="form-label" for="description">Description</label>
-        <textarea class="form-control" id="description" name="description">
+        <textarea
+          class="form-control"
+          id="description"
+          name="description"
+          required
+        >
 <%= camp.description %></textarea
         >
+        <div class="valid-feedback">Looks good!</div>
+        <div class="invalid-feedback">Please enter description.</div>
       </div>
       <div class="mb-3">
         <button class="btn btn-info">Update</button>

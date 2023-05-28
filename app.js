@@ -5,6 +5,7 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const catchError = require("./utils/catchError");
+const AppError = require("./utils/AppError");
 
 const app = express();
 
@@ -61,7 +62,10 @@ app.get(
 
 app.post(
   "/campgrounds",
-  catchError(async (req, res) => {
+  catchError(async (req, res, next) => {
+    if (!req.body) {
+      return next(new AppError("Fields cannot be empty", 400));
+    }
     const camp = new Campground(req.body);
     await camp.save();
     res.redirect(`/campgrounds/${camp._id}/details`);
@@ -84,8 +88,13 @@ app.delete(
   })
 );
 
+app.all("*", (req, res, next) => {
+  return next(new AppError("Page not found", 404));
+});
+
 app.use((err, req, res, next) => {
-  res.send("Something went wrong.");
+  const { message = "Something went wrong", status = 500 } = err;
+  res.status(status).send(message);
 });
 
 app.listen(3000, () => {

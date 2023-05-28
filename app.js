@@ -75,6 +75,9 @@ app.post(
 app.put(
   "/campgrounds/:id",
   catchError(async (req, res) => {
+    if (!req.body) {
+      return next(new AppError("Fields cannot be empty", 400));
+    }
     await Campground.findByIdAndUpdate(req.params.id, req.body);
     res.redirect(`/campgrounds/${req.params.id}/details`);
   })
@@ -93,8 +96,10 @@ app.all("*", (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  const { message = "Something went wrong", status = 500 } = err;
-  res.status(status).send(message);
+  const { status = 500 } = err;
+  if (!err.status) err.status = 500;
+  if (!err.message) err.message = "Oh No! Something went wrong.";
+  res.status(status).render("camps/error", { err });
 });
 
 app.listen(3000, () => {

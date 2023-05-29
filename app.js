@@ -6,6 +6,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const catchError = require("./utils/catchError");
 const AppError = require("./utils/AppError");
+const { campSchema } = require("./validationSchemas");
 
 const app = express();
 
@@ -27,6 +28,16 @@ mongoose
   .catch((e) => {
     console.log("Connection error ", e);
   });
+
+const validateCamp = (req, res, next) => {
+  const { error } = campSchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((i) => i.message).join(",");
+    next(new AppError(msg, 400));
+  } else {
+    next();
+  }
+};
 
 app.get("/", (req, res) => {
   res.render("camps/home");
@@ -62,10 +73,8 @@ app.get(
 
 app.post(
   "/campgrounds",
-  catchError(async (req, res, next) => {
-    if (!req.body) {
-      return next(new AppError("Fields cannot be empty", 400));
-    }
+  validateCamp,
+  catchError(async (req, res) => {
     const camp = new Campground(req.body);
     await camp.save();
     res.redirect(`/campgrounds/${camp._id}/details`);
@@ -74,10 +83,8 @@ app.post(
 
 app.put(
   "/campgrounds/:id",
+  validateCamp,
   catchError(async (req, res) => {
-    if (!req.body) {
-      return next(new AppError("Fields cannot be empty", 400));
-    }
     await Campground.findByIdAndUpdate(req.params.id, req.body);
     res.redirect(`/campgrounds/${req.params.id}/details`);
   })

@@ -6,7 +6,8 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const catchError = require("./utils/catchError");
 const AppError = require("./utils/AppError");
-const { campSchema } = require("./validationSchemas");
+const { campSchema, reviewSchema } = require("./validationSchemas");
+const Review = require("./models/review");
 
 const app = express();
 
@@ -39,6 +40,16 @@ const validateCamp = (req, res, next) => {
   }
 };
 
+const validateReview = (req, res, next) => {
+  const { error } = reviewSchema.validate(req.body);
+  if (error) {
+    const msg = error.details.map((i) => i.message).join(",");
+    next(new AppError(msg, 400));
+  } else {
+    next();
+  }
+};
+
 app.get("/", (req, res) => {
   res.render("camps/home");
 });
@@ -54,7 +65,7 @@ app.get(
 app.get(
   "/campgrounds/:id/details",
   catchError(async (req, res) => {
-    const camp = await Campground.findById(req.params.id);
+    const camp = await Campground.findById(req.params.id).populate("reviews");
     res.render("camps/details", { camp });
   })
 );
@@ -75,8 +86,21 @@ app.post(
   "/campgrounds",
   validateCamp,
   catchError(async (req, res) => {
-    const camp = new Campground(req.body);
+    const camp = new Campground(req.body.campground);
     await camp.save();
+    res.redirect(`/campgrounds/${camp._id}/details`);
+  })
+);
+
+app.post(
+  "/campgrounds/:id/review",
+  validateReview,
+  catchError(async (req, res) => {
+    const camp = await Campground.findById(req.params.id);
+    const review = new Review(req.body.review);
+    camp.reviews.push(review);
+    await camp.save();
+    await review.save();
     res.redirect(`/campgrounds/${camp._id}/details`);
   })
 );
@@ -85,7 +109,7 @@ app.put(
   "/campgrounds/:id",
   validateCamp,
   catchError(async (req, res) => {
-    await Campground.findByIdAndUpdate(req.params.id, req.body);
+    await Campground.findByIdAndUpdate(req.params.id, req.body.campground);
     res.redirect(`/campgrounds/${req.params.id}/details`);
   })
 );

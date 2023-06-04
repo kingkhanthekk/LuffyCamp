@@ -15,6 +15,7 @@ app.set("view engine", "ejs");
 app.engine("ejs", ejsMate);
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/campgrounds", camgroundRoutes);
 app.use("/campgrounds/:id/review", reviewRoutes);

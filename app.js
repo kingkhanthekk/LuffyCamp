@@ -8,18 +8,24 @@ const flash = require("connect-flash");
 const AppError = require("./utils/AppError");
 const camgroundRoutes = require("./routes/campgrounds");
 const reviewRoutes = require("./routes/reviews");
-
 const app = express();
+const passport = require("passport");
+const passportLocal = require("passport-local");
+const User = require("./models/user");
 
+//Initializing ejs
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+//Initializing boilerplate
 app.engine("ejs", ejsMate);
+
+//Initializing post method, method override, and static
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
-app.use(flash());
 
+//Initializing session and flash
 const sessionConfig = {
   secret: "thisisasecret",
   resave: false,
@@ -32,6 +38,16 @@ const sessionConfig = {
 };
 
 app.use(session(sessionConfig));
+app.use(flash());
+
+// passport initialization
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new passportLocal(User.authenticate()));
+
+//passport serialize and deserialize
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");

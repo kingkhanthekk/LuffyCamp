@@ -5,6 +5,7 @@ const Campground = require("../models/campground");
 const AppError = require("../utils/AppError");
 const { campSchema } = require("../validationSchemas");
 const methodOverride = require("method-override");
+const { isLoggedIn } = require("../middlewares");
 
 router.use(methodOverride("_method"));
 router.use(express.urlencoded({ extended: true }));
@@ -40,12 +41,13 @@ router.get(
   })
 );
 
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("camps/new");
 });
 
 router.get(
   "/:id/update",
+  isLoggedIn,
   catchError(async (req, res) => {
     try {
       const camp = await Campground.findById(req.params.id);
@@ -70,6 +72,7 @@ router.post(
 
 router.put(
   "/:id",
+  isLoggedIn,
   validateCamp,
   catchError(async (req, res) => {
     await Campground.findByIdAndUpdate(req.params.id, req.body.campground);
@@ -80,6 +83,7 @@ router.put(
 
 router.delete(
   "/:id",
+  isLoggedIn,
   catchError(async (req, res) => {
     await Campground.findByIdAndDelete(req.params.id);
     req.flash("success", "Successfully deleted campground!");

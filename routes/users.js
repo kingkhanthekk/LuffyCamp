@@ -2,11 +2,25 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const catchError = require("../utils/catchError");
+const passport = require("passport");
 
 router.use(express.urlencoded({ extended: true }));
 
 router.get("/register", (req, res) => {
   res.render("users/register");
+});
+
+router.get("/login", (req, res) => {
+  res.render("users/login");
+});
+
+router.get("/logout", (req, res) => {
+  req.logout((err) => {
+    if (!err) {
+      req.flash("success", "Successfully logged out!");
+      res.redirect("/login");
+    }
+  });
 });
 
 router.post(
@@ -15,14 +29,29 @@ router.post(
     try {
       const { username, email, password } = req.body;
       const user = await new User({ username, email });
-      await User.register(user, password);
-      req.flash("success", "Welcome to LuffyCamp!");
-      res.redirect("/campgrounds");
+      const newUser = await User.register(user, password);
+      req.login(newUser, (err) => {
+        if (err) return next(err);
+        req.flash("success", "Welcome to LuffyCamp!");
+        res.redirect("/campgrounds");
+      });
     } catch (e) {
       req.flash("error", e.message);
       res.redirect("/register");
     }
   })
+);
+
+router.post(
+  "/login",
+  passport.authenticate("local", {
+    failureFlash: true,
+    failureRedirect: "/login",
+  }),
+  (req, res) => {
+    req.flash("success", "Welcome back!");
+    res.redirect("/campgrounds");
+  }
 );
 
 module.exports = router;

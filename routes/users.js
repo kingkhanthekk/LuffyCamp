@@ -11,7 +11,8 @@ router.get("/register", (req, res) => {
 });
 
 router.get("/login", (req, res) => {
-  res.render("users/login");
+  const redirectPath = req.session.returnPath || "/campgrounds";
+  res.render("users/login", { redirectPath });
 });
 
 router.get("/logout", (req, res) => {
@@ -49,8 +50,9 @@ router.post(
     failureRedirect: "/login",
   }),
   (req, res) => {
+    const { redirectPath } = req.body;
     req.flash("success", "Welcome back!");
-    res.redirect("/campgrounds");
+    res.redirect(redirectPath);
   }
 );
 

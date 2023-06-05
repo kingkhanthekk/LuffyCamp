@@ -6,12 +6,15 @@ const ejsMate = require("ejs-mate");
 const session = require("express-session");
 const flash = require("connect-flash");
 const AppError = require("./utils/AppError");
-const camgroundRoutes = require("./routes/campgrounds");
-const reviewRoutes = require("./routes/reviews");
 const app = express();
 const passport = require("passport");
 const passportLocal = require("passport-local");
 const User = require("./models/user");
+
+//Requiring routes
+const camgroundRoutes = require("./routes/campgrounds");
+const reviewRoutes = require("./routes/reviews");
+const userRoutes = require("./routes/users");
 
 //Initializing ejs
 app.set("views", path.join(__dirname, "views"));
@@ -55,9 +58,12 @@ app.use((req, res, next) => {
   next();
 });
 
+//Route initialization
 app.use("/campgrounds", camgroundRoutes);
 app.use("/campgrounds/:id/review", reviewRoutes);
+app.use("/", userRoutes);
 
+//MongoDB connection
 mongoose
   .connect("mongodb://127.0.0.1:27017/campDB", {
     useNewUrlParser: true,

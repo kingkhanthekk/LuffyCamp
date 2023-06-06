@@ -7,21 +7,22 @@ const usersController = require("../controllers/users");
 
 router.use(express.urlencoded({ extended: true }));
 
-router.get("/register", usersController.registerForm);
+router
+  .route("/register")
+  .get(usersController.registerForm)
+  .post(catchError(usersController.createUser));
 
-router.get("/login", usersController.loginForm);
+router
+  .route("/login")
+  .get(usersController.loginForm)
+  .post(
+    passport.authenticate("local", {
+      failureFlash: true,
+      failureRedirect: "/login",
+    }),
+    usersController.login
+  );
 
 router.get("/logout", usersController.logout);
-
-router.post("/register", catchError(usersController.createUser));
-
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    failureFlash: true,
-    failureRedirect: "/login",
-  }),
-  usersController.login
-);
 
 module.exports = router;

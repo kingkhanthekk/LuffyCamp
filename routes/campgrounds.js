@@ -10,7 +10,14 @@ router.use(express.urlencoded({ extended: true }));
 
 //Adding controllers
 
-router.get("/", catchError(campgroundsController.index));
+router
+  .route("/")
+  .get(catchError(campgroundsController.index))
+  .post(
+    isLoggedIn,
+    validateCamp,
+    catchError(campgroundsController.createCampground)
+  );
 
 router.get("/:id/details", catchError(campgroundsController.details));
 
@@ -23,26 +30,18 @@ router.get(
   catchError(campgroundsController.updateForm)
 );
 
-router.post(
-  "/",
-  isLoggedIn,
-  validateCamp,
-  catchError(campgroundsController.createCampground)
-);
-
-router.put(
-  "/:id",
-  isLoggedIn,
-  isAuthor,
-  validateCamp,
-  catchError(campgroundsController.updateCampground)
-);
-
-router.delete(
-  "/:id",
-  isLoggedIn,
-  isAuthor,
-  catchError(campgroundsController.deleteCampground)
-);
+router
+  .route("/:id")
+  .put(
+    isLoggedIn,
+    isAuthor,
+    validateCamp,
+    catchError(campgroundsController.updateCampground)
+  )
+  .delete(
+    isLoggedIn,
+    isAuthor,
+    catchError(campgroundsController.deleteCampground)
+  );
 
 module.exports = router;

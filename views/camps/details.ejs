@@ -72,13 +72,18 @@
       <div class="card mb-2">
         <div class="card-body">
           <h5 class="card-title">Rating: <%= review.rating %></h5>
+          <p class="card-subtitle text-secondary mb-2">
+            By <%= review.author.username %>
+          </p>
           <p class="card-text">Review: <%= review.text %></p>
+          <% if(currentUser && review.author.equals(currentUser)) { %>
           <form
             action="/campgrounds/<%= camp._id %>/review/<%= review._id %>?_method=delete"
             method="post"
           >
             <button class="btn btn-sm btn-danger">Delete</button>
           </form>
+          <% } %>
         </div>
       </div>
       <% } %>

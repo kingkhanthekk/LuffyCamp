@@ -2,7 +2,11 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
 const catchError = require("../utils/catchError");
 const Campground = require("../models/campground");
-const { validateReview, isLoggedIn } = require("../middlewares");
+const {
+  validateReview,
+  isLoggedIn,
+  isReviewAuthor,
+} = require("../middlewares");
 const Review = require("../models/review");
 const methodOverride = require("method-override");
 
@@ -27,6 +31,8 @@ router.post(
 
 router.delete(
   "/:reviewId",
+  isLoggedIn,
+  isReviewAuthor,
   catchError(async (req, res) => {
     const { id, reviewId } = req.params;
     await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });

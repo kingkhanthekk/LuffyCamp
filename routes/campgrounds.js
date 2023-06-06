@@ -2,23 +2,11 @@ const express = require("express");
 const router = express.Router();
 const catchError = require("../utils/catchError");
 const Campground = require("../models/campground");
-const AppError = require("../utils/AppError");
-const { campSchema } = require("../validationSchemas");
 const methodOverride = require("method-override");
-const { isLoggedIn } = require("../middlewares");
+const { isLoggedIn, validateCamp, isAuthor } = require("../middlewares");
 
 router.use(methodOverride("_method"));
 router.use(express.urlencoded({ extended: true }));
-
-const validateCamp = (req, res, next) => {
-  const { error } = campSchema.validate(req.body);
-  if (error) {
-    const msg = error.details.map((i) => i.message).join(",");
-    next(new AppError(msg, 400));
-  } else {
-    next();
-  }
-};
 
 router.get(
   "/",
@@ -50,6 +38,7 @@ router.get("/new", isLoggedIn, (req, res) => {
 router.get(
   "/:id/update",
   isLoggedIn,
+  isAuthor,
   catchError(async (req, res) => {
     try {
       const camp = await Campground.findById(req.params.id);
@@ -63,6 +52,7 @@ router.get(
 
 router.post(
   "/",
+  isLoggedIn,
   validateCamp,
   catchError(async (req, res) => {
     const camp = new Campground(req.body.campground);
@@ -76,6 +66,7 @@ router.post(
 router.put(
   "/:id",
   isLoggedIn,
+  isAuthor,
   validateCamp,
   catchError(async (req, res) => {
     await Campground.findByIdAndUpdate(req.params.id, req.body.campground);
@@ -87,6 +78,7 @@ router.put(
 router.delete(
   "/:id",
   isLoggedIn,
+  isAuthor,
   catchError(async (req, res) => {
     await Campground.findByIdAndDelete(req.params.id);
     req.flash("success", "Successfully deleted campground!");

@@ -51,7 +51,6 @@ router.post(
   }),
   (req, res) => {
     const { redirectPath } = req.body;
-    console.log(req.session);
     req.flash("success", "Welcome back!");
     res.redirect(redirectPath);
   }

@@ -3,45 +3,17 @@ const router = express.Router();
 const User = require("../models/user");
 const catchError = require("../utils/catchError");
 const passport = require("passport");
+const usersController = require("../controllers/users");
 
 router.use(express.urlencoded({ extended: true }));
 
-router.get("/register", (req, res) => {
-  res.render("users/register");
-});
+router.get("/register", usersController.registerForm);
 
-router.get("/login", (req, res) => {
-  const redirectPath = req.session.returnPath || "/campgrounds";
-  res.render("users/login", { redirectPath });
-});
+router.get("/login", usersController.loginForm);
 
-router.get("/logout", (req, res) => {
-  req.logout((err) => {
-    if (!err) {
-      req.flash("success", "Successfully logged out!");
-      res.redirect("/login");
-    }
-  });
-});
+router.get("/logout", usersController.logout);
 
-router.post(
-  "/register",
-  catchError(async (req, res) => {
-    try {
-      const { username, email, password } = req.body;
-      const user = await new User({ username, email });
-      const newUser = await User.register(user, password);
-      req.login(newUser, (err) => {
-        if (err) return next(err);
-        req.flash("success", "Welcome to LuffyCamp!");
-        res.redirect("/campgrounds");
-      });
-    } catch (e) {
-      req.flash("error", e.message);
-      res.redirect("/register");
-    }
-  })
-);
+router.post("/register", catchError(usersController.createUser));
 
 router.post(
   "/login",
@@ -49,11 +21,7 @@ router.post(
     failureFlash: true,
     failureRedirect: "/login",
   }),
-  (req, res) => {
-    const { redirectPath } = req.body;
-    req.flash("success", "Welcome back!");
-    res.redirect(redirectPath);
-  }
+  usersController.login
 );
 
 module.exports = router;

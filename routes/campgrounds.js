@@ -9,7 +9,8 @@ const methodOverride = require("method-override");
 const { isLoggedIn, validateCamp, isAuthor } = require("../middlewares");
 const campgroundsController = require("../controllers/campgrounds");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+const { storage } = require("../cloudinary");
+const upload = multer({ storage });
 
 router.use(methodOverride("_method"));
 router.use(express.urlencoded({ extended: true }));
@@ -19,11 +20,14 @@ router.use(express.urlencoded({ extended: true }));
 router
   .route("/")
   .get(catchError(campgroundsController.index))
-  .post(
-    isLoggedIn,
-    validateCamp,
-    catchError(campgroundsController.createCampground)
-  );
+  .post(upload.single("image"), (req, res) => {
+    console.log(req.body, req.file);
+  });
+// .post(
+//   isLoggedIn,
+//   validateCamp,
+//   catchError(campgroundsController.createCampground)
+// );
 
 router.get("/:id/details", catchError(campgroundsController.details));
 

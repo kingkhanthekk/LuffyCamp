@@ -20,14 +20,12 @@ router.use(express.urlencoded({ extended: true }));
 router
   .route("/")
   .get(catchError(campgroundsController.index))
-  .post(upload.single("image"), (req, res) => {
-    console.log(req.body, req.file);
-  });
-// .post(
-//   isLoggedIn,
-//   validateCamp,
-//   catchError(campgroundsController.createCampground)
-// );
+  .post(
+    isLoggedIn,
+    upload.array("image"),
+    validateCamp,
+    catchError(campgroundsController.createCampground)
+  );
 
 router.get("/:id/details", catchError(campgroundsController.details));
 

@@ -41,6 +41,7 @@ module.exports.createCampground = async (req, res) => {
 };
 
 module.exports.updateCampground = async (req, res) => {
+  console.log(req.body);
   const camp = await Campground.findByIdAndUpdate(
     req.params.id,
     req.body.campground

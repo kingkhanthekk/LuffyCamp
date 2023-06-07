@@ -43,6 +43,7 @@ router
   .put(
     isLoggedIn,
     isAuthor,
+    upload.array("image"),
     validateCamp,
     catchError(campgroundsController.updateCampground)
   )

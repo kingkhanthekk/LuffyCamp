@@ -9,8 +9,10 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  folder: "LuffyCamp",
-  allowedFormats: ["jpeg", "png", "jpg"],
+  params: {
+    folder: "LuffyCamp",
+    allowedFormats: ["jpeg", "png", "jpg"],
+  },
 });
 
 module.exports = {

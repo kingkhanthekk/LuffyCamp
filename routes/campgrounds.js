@@ -4,6 +4,8 @@ const catchError = require("../utils/catchError");
 const methodOverride = require("method-override");
 const { isLoggedIn, validateCamp, isAuthor } = require("../middlewares");
 const campgroundsController = require("../controllers/campgrounds");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 router.use(methodOverride("_method"));
 router.use(express.urlencoded({ extended: true }));

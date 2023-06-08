@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Review = require("./review");
 const { cloudinary } = require("../cloudinary");
+const opts = { toJSON: { virtuals: true } };
 
 const imageSchema = Schema({
   url: String,
@@ -24,33 +25,40 @@ imageSchema.virtual("detail").get(function () {
   }));
 });
 
-const campgroundSchema = new Schema({
-  title: String,
-  price: Number,
-  geometry: {
-    type: {
-      type: String,
-      enum: ["Point"],
-      required: true,
+const campgroundSchema = new Schema(
+  {
+    title: String,
+    price: Number,
+    geometry: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        required: true,
+      },
+      coordinates: {
+        type: [Number],
+        required: true,
+      },
     },
-    coordinates: {
-      type: [Number],
-      required: true,
-    },
-  },
-  images: [imageSchema],
-  description: String,
-  location: String,
-  author: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-  },
-  reviews: [
-    {
+    images: [imageSchema],
+    description: String,
+    location: String,
+    author: {
       type: Schema.Types.ObjectId,
-      ref: "Review",
+      ref: "User",
     },
-  ],
+    reviews: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
+  },
+  otps
+);
+
+campgroundSchema.virtual("properties.popupHTML").get(function () {
+  return `<h4>${this.title}</h4><p>${this.location}</p>`;
 });
 
 campgroundSchema.post("findOneAndDelete", async (camp) => {

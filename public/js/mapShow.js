@@ -3,8 +3,15 @@ mapboxgl.accessToken =
 const map = new mapboxgl.Map({
   container: "map", // container ID
   style: "mapbox://styles/mapbox/streets-v12", // style URL
-  center: coordinates, // starting position [lng, lat]
+  center: camp.geometry.coordinates, // starting position [lng, lat]
   zoom: 7, // starting zoom
 });
 
-const marker = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
+const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
+  `<h4>${camp.title}</h4><p>${camp.location}`
+);
+
+const marker = new mapboxgl.Marker()
+  .setLngLat(camp.geometry.coordinates)
+  .setPopup(popup)
+  .addTo(map);

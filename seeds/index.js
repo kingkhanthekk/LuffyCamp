@@ -2,12 +2,6 @@ const mongoose = require("mongoose");
 const Campground = require("../models/campground");
 const seeds = require("./seeds");
 const { descriptors, places } = require("./seedHelpers");
-const mbxGeocode = require("@mapbox/mapbox-sdk/services/geocoding");
-
-const geocoder = mbxGeocode({
-  accessToken:
-    "pk.eyJ1Ijoia2luZ2toYW50aGVrayIsImEiOiJjbGluMGgxa3AwcHlrM2twY3JudnA5NjlsIn0.6XnIR2jgo1yw-UeTbaeTWQ",
-});
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/campDB", {
@@ -25,20 +19,18 @@ const name = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
 const seedDB = async () => {
   await Campground.deleteMany({});
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 300; i++) {
     let price = Math.floor(Math.random() * 20) + 10;
     const location = `${seeds[i].city}, ${seeds[i].state}`;
-    const geoData = await geocoder
-      .forwardGeocode({
-        query: location,
-        limit: 1,
-      })
-      .send();
+    const geometry = {
+      type: "Point",
+      coordinates: [seeds[i].longitude, seeds[i].latitude],
+    };
     let camp = new Campground({
       author: "647dfacf1b3cbb6749f60092",
       title: `${name(descriptors)} ${name(places)}`,
       location,
-      geometry: geoData.body.features[0].geometry,
+      geometry,
       images: [
         {
           url: "https://res.cloudinary.com/dxql5gfer/image/upload/v1686153377/LuffyCamp/bfwileinjm4fmnrqx348.jpg",

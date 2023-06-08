@@ -1,4 +1,11 @@
 <% layout('layouts/boilerplate') %>
+<link
+  href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
+  rel="stylesheet"
+/>
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+
+<div id="map" style="height: 400px; width: 100%"></div>
 <h1 class="mb-3">All Campgrounds</h1>
 <!-- <a class="btn btn-success mb-2" href="/campgrounds/new">Add a campground</a> -->
 
@@ -31,3 +38,9 @@
   </div>
 </div>
 <% } %>
+
+<script>
+  const camps = {features: <%- JSON.stringify(camps) %>};
+</script>
+
+<script src="/js/mapCluster.js"></script>

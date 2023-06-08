@@ -47,7 +47,6 @@ module.exports.createCampground = async (req, res) => {
   camp.geometry = geoData.body.features[0].geometry;
   camp.images = req.files.map((f) => ({ url: f.path, filename: f.filename }));
   await camp.save();
-  console.log(camp);
   req.flash("success", "Successfully added a campground!");
   res.redirect(`/campgrounds/${camp._id}/details`);
 };

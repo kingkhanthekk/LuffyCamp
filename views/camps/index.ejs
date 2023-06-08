@@ -6,7 +6,15 @@
 <div class="card">
   <div class="row">
     <div class="col-md-4">
+      <% if(camp.images.length) { %>
       <img class="img-fluid" src="<%= camp.images[0].url %>" alt="" />
+      <% } else { %>
+      <img
+        class="img-fluid"
+        src="https://res.cloudinary.com/dxql5gfer/image/upload/c_fill,h_350,w_500/v1/LuffyCamp/bfwileinjm4fmnrqx348"
+        alt=""
+      />
+      <% } %>
     </div>
     <div class="col-md-8">
       <div class="card-body">

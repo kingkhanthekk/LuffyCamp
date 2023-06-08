@@ -1,13 +1,17 @@
 <% layout('layouts/boilerplate') %>
 <link rel="stylesheet" href="/css/star.css" />
 
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+
+
 <div class="row mb-3">
   <div class="col-6">
     <div id="campgroundCarousel" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-inner">
         <% camp.images.forEach((image, i)=> { %>
           <div class="carousel-item <%= i === 0 ? "active" : "" %>">
-            <img src="<%= image.detail %>" class="d-block w-100" alt="..." />
+            <img src="<%= image.detail %>" class="d-block w-100" alt="No Image" />
           </div>
         <% }) %>
       </div>
@@ -59,6 +63,7 @@
     </div>
   </div>
   <div class="col-6">
+    <div id='map' style='height: 300px;'></div>
     <% if(currentUser) { %>
     <h2>Leave a review</h2>
     <form
@@ -149,3 +154,7 @@
     </div>
   </div>
 </div>
+<script>
+  const coordinates = <%- JSON.stringify(camp.geometry.coordinates) %>;
+</script>
+<script src="/js/mapShow.js"></script>

@@ -1,34 +1,43 @@
 <% layout('layouts/boilerplate') %>
-<div class="row">
+<div class="row mt-md-3">
   <h1 class="text-center mb-2">Login</h1>
-  <div class="col-6 offset-3">
-    <form class="needs-validation" action="/login" method="post" novalidate>
-      <div class="mb-3">
-        <label class="form-label" for="username">Username</label>
-        <input
-          class="form-control"
-          type="text"
-          id="username"
-          name="username"
-          placeholder="Enter username"
-          required
-        />
-        <div class="invalid-feedback">Please enter username.</div>
+  <div class="col-lg-4 offset-lg-4 col-md-6 offset-md-3">
+    <div class="card shadow">
+      <div class="card-body">
+        <form class="needs-validation" action="/login" method="post" novalidate>
+          <div class="mb-3">
+            <label class="form-label" for="username">Username</label>
+            <input
+              class="form-control"
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Enter username"
+              required
+              autofocus
+            />
+            <div class="invalid-feedback">Please enter username.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="password">Password</label>
+            <input
+              class="form-control"
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter password"
+              required
+            />
+            <div class="invalid-feedback">Please enter password.</div>
+          </div>
+          <input
+            type="hidden"
+            name="redirectPath"
+            value="<%= redirectPath %>"
+          />
+          <button class="btn btn-success w-100">Login</button>
+        </form>
       </div>
-      <div class="mb-3">
-        <label class="form-label" for="password">Password</label>
-        <input
-          class="form-control"
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Enter password"
-          required
-        />
-        <div class="invalid-feedback">Please enter password.</div>
-      </div>
-      <input type="hidden" name="redirectPath" value="<%= redirectPath %>" />
-      <button class="btn btn-success">Login</button>
-    </form>
+    </div>
   </div>
 </div>

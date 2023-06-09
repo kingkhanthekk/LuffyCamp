@@ -11,6 +11,8 @@ const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
   `<h4>${camp.title}</h4><p>${camp.location}`
 );
 
+map.addControl(new mapboxgl.NavigationControl());
+
 const marker = new mapboxgl.Marker()
   .setLngLat(camp.geometry.coordinates)
   .setPopup(popup)

@@ -5,12 +5,12 @@
 />
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 
-<div id="map" style="height: 400px; width: 100%"></div>
+<div id="cluster-map"></div>
 <h1 class="mb-3">All Campgrounds</h1>
 <!-- <a class="btn btn-success mb-2" href="/campgrounds/new">Add a campground</a> -->
 
 <% for(let camp of camps) { %>
-<div class="card">
+<div class="card mb-3">
   <div class="row">
     <div class="col-md-4">
       <% if(camp.images.length) { %>

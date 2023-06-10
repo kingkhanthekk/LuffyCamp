@@ -38,11 +38,13 @@ app.use(
 
 //Initializing session and flash
 const sessionConfig = {
+  name: "session",
   secret: "thisisasecret",
   resave: false,
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
+    // secure: true,
     expires: Date.now() + 1000 * 3600 * 3,
     maxAge: 1000 * 3600 * 3,
   },

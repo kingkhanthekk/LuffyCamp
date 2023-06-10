@@ -16,11 +16,28 @@ const passportLocal = require("passport-local");
 const User = require("./models/user");
 const mongoSanitize = require("express-mongo-sanitize");
 const helmet = require("helmet");
+const MongoStore = require("connect-mongo");
 
 //Requiring routes
 const camgroundRoutes = require("./routes/campgrounds");
 const reviewRoutes = require("./routes/reviews");
 const userRoutes = require("./routes/users");
+
+// const DB = process.env.DB_URL;
+const DB = "mongodb://127.0.0.1:27017/campDB";
+
+//MongoDB connection
+mongoose
+  .connect(DB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Database Connected");
+  })
+  .catch((e) => {
+    console.log("Connection error ", e);
+  });
 
 //Initializing ejs
 app.set("views", path.join(__dirname, "views"));
@@ -41,8 +58,18 @@ app.use(
   })
 );
 
+//Initialize mongo store for sessions
+const store = MongoStore.create({
+  mongoUrl: DB,
+  crypto: {
+    secret: "thisisasecret",
+  },
+  touchAfter: 3600 * 24,
+});
+
 //Initializing session and flash
 const sessionConfig = {
+  store,
   name: "session",
   secret: "thisisasecret",
   resave: false,
@@ -128,19 +155,6 @@ app.use((req, res, next) => {
 app.use("/campgrounds", camgroundRoutes);
 app.use("/campgrounds/:id/review", reviewRoutes);
 app.use("/", userRoutes);
-
-//MongoDB connection
-mongoose
-  .connect("mongodb://127.0.0.1:27017/campDB", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("Database Connected");
-  })
-  .catch((e) => {
-    console.log("Connection error ", e);
-  });
 
 app.get("/", (req, res) => {
   res.render("camps/home");

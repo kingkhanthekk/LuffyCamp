@@ -10,6 +10,7 @@ const app = express();
 const passport = require("passport");
 const passportLocal = require("passport-local");
 const User = require("./models/user");
+const mongoSanitize = require("express-mongo-sanitize");
 
 //Requiring routes
 const camgroundRoutes = require("./routes/campgrounds");
@@ -27,6 +28,13 @@ app.engine("ejs", ejsMate);
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
+
+//Mongo injection sanitize
+app.use(
+  mongoSanitize({
+    replaceWith: "_",
+  })
+);
 
 //Initializing session and flash
 const sessionConfig = {

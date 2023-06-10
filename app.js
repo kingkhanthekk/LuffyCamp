@@ -24,7 +24,7 @@ const reviewRoutes = require("./routes/reviews");
 const userRoutes = require("./routes/users");
 
 // const DB = process.env.DB_URL;
-const DB = "mongodb://127.0.0.1:27017/campDB";
+const DB = process.env.DB_URL || "mongodb://127.0.0.1:27017/campDB";
 
 //MongoDB connection
 mongoose
@@ -59,10 +59,11 @@ app.use(
 );
 
 //Initialize mongo store for sessions
+const secret = process.env.SECRET || "thisisasecret";
 const store = MongoStore.create({
   mongoUrl: DB,
   crypto: {
-    secret: "thisisasecret",
+    secret,
   },
   touchAfter: 3600 * 24,
 });
@@ -71,7 +72,7 @@ const store = MongoStore.create({
 const sessionConfig = {
   store,
   name: "session",
-  secret: "thisisasecret",
+  secret,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -171,6 +172,7 @@ app.use((err, req, res, next) => {
   res.status(status).render("camps/error", { err });
 });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000.");
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}.`);
 });
